@@ -40,3 +40,10 @@ alembic revision --autogenerate -m 'initial'
 
 *initial* - название первой миграции
 
+### Применить миграцию
+
+```commandline
+alembic upgrade 4be659b1e34b
+```
+
+*4be659b1e34b* - хеш миграции
