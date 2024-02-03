@@ -57,6 +57,15 @@ class Clubs(Base):
         nullable=False,
         doc="Описание кружка",
     )
+    city_id = sqlalchemy.Column(
+        sqlalchemy.ForeignKey(
+            column="cities.id",
+            ondelete="CASCADE",
+        ),
+        type_=sqlalchemy.Integer,
+        nullable=False,
+        doc="Город, где располагается кружок",
+    )
     organization_id = sqlalchemy.Column(
         sqlalchemy.ForeignKey(
             column="organizations.id",
@@ -97,7 +106,7 @@ class ClubsTags(Base):
 
 
 class Organizations(Base):
-    """Класс, описывающий таблицу организаций."""
+    """Класс, описывающий таблицу организаций"""
 
     __tablename__ = "organizations"
 
@@ -135,16 +144,6 @@ class Organizations(Base):
         nullable=True,
         doc="Адрес",
     )
-    city_id = sqlalchemy.Column(
-        sqlalchemy.ForeignKey(
-            column="cities.id",
-            ondelete="CASCADE",
-        ),
-        type_=sqlalchemy.Integer,
-        nullable=False,
-        doc="Город, где расположена организация",
-    )
-    city = sqlalchemy.orm.relationship("Cities", backref="organization")
 
     @sqlalchemy.orm.validates("email")
     def validate_email(self, key, mail: str):
