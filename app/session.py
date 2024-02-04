@@ -1,6 +1,5 @@
 import re
 
-import sqlalchemy
 import sqlalchemy.orm
 
 DATABASE_NAME = "db.sqlite"
@@ -9,8 +8,8 @@ engine = sqlalchemy.create_engine(f"sqlite:///{DATABASE_NAME}")
 Session = sqlalchemy.orm.sessionmaker(bind=engine)
 
 Base = sqlalchemy.orm.declarative_base()
-metadata = sqlalchemy.MetaData()
-metadata.reflect(bind=engine)
+Metadata = sqlalchemy.MetaData()
+Metadata.reflect(bind=engine)
 
 
 def create_db():
