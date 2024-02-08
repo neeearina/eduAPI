@@ -11,6 +11,17 @@ router = fastapi.APIRouter(
 )
 
 
+def check_is_exist(query_class, object_id):
+    with session.Session() as my_session:
+        is_exist = (
+            my_session.query(query_class)
+            .filter_by(id=object_id).first()
+        )
+        if is_exist:
+            return True
+        return False
+
+
 @router.get("/", response_model=typing.List[shemas.ClubBase])
 def get_all_clubs():
     """Получить все кружки, которые есть"""
@@ -24,24 +35,18 @@ def create_club(club_info: shemas.CreateClub):
     """Создать новый кружок"""
     with session.Session() as my_session:
         new_club = session.Clubs(**club_info.dict())
-        is_city = (
-            my_session.query(session.Cities)
-            .filter_by(id=club_info.city_id).first()
-        )
-        if not is_city:
+        if not check_is_exist(session.Cities, club_info.city_id):
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail=f"no city with id: {club_info.city_id}",
             )
-        is_org = (
-            my_session.query(session.Organizations)
-            .filter_by(id=club_info.organization_id).first()
-        )
-        if not is_org:
+        if not check_is_exist(session.Organizations,
+                              club_info.organization_id):
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail=f"no organization with id: {club_info.city_id}",
             )
+        my_session.add(new_club)
         my_session.commit()
         return (
             my_session.query(session.Clubs)
@@ -62,15 +67,27 @@ def get_club_by_id(club_id: int):
         return club
 
 
+@router.put("/{club_id}", response_model=shemas.Club)
+def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub):
+    """Изменить пост по его id"""
+    with session.Session() as my_session:
+        club_query = my_session.query(session.Clubs).filter_by(id=club_id)
+        club = club_query.first()
+        if not club:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail=f"club with id: {club_id} was not found",
+            )
+        club_query.update(update_club_info.dict(), synchronize_session=False)
+        my_session.commit()
+        return club_query.first()
+
+
 @router.get("/city/{city_id}", response_model=typing.List[shemas.ClubBase])
 def get_clubs_by_cities(city_id: int):
     """Получить все кружки, которые существуют в определенном городе"""
     with session.Session() as my_session:
-        is_city = (
-            my_session.query(session.Cities)
-            .filter_by(id=city_id).first()
-        )
-        if not is_city:
+        if not check_is_exist(session.Cities, city_id):
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail=f"city with id: {city_id} was not found",
