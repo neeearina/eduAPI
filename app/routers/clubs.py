@@ -7,11 +7,32 @@ import shemas
 
 router = fastapi.APIRouter(
     prefix="/clubs",
-    tags=["Clubs"],
+    tags=["Clubs", "Cities"],
 )
 
 
-@router.get("/city/{city_id}", response_model=typing.List[shemas.ClubsByCity])
+@router.get("/", response_model=typing.List[shemas.ClubBase])
+def get_all_clubs():
+    """Получить все кружки, которые есть"""
+    with session.Session() as my_session:
+        return my_session.query(session.Clubs.id, session.Clubs.name).all()
+
+
+@router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
+             response_model=shemas.Club)
+def create_club(club_info: shemas.CreateClub):
+    """Создать новый кружок"""
+    with session.Session() as my_session:
+        new_club = session.Clubs(**club_info.dict())
+        my_session.add(new_club)
+        my_session.commit()
+        return (
+            my_session.query(session.Clubs)
+            .filter_by(id=new_club.id).first()
+        )
+
+
+@router.get("/city/{city_id}", response_model=typing.List[shemas.ClubBase])
 def get_clubs_by_cities(city_id: int):
     """Получить все кружки, которые существуют в определенном городе"""
     with session.Session() as my_session:
@@ -25,7 +46,7 @@ def get_clubs_by_cities(city_id: int):
                 detail=f"city with id: {city_id} was not found",
             )
         clubs_by_city = (
-            my_session.query(session.Clubs)
+            my_session.query(session.Clubs.id, session.Clubs.name)
             .filter_by(city_id=city_id).all()
         )
         if not clubs_by_city:
