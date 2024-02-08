@@ -49,6 +49,19 @@ def create_club(club_info: shemas.CreateClub):
         )
 
 
+@router.get("/{club_id}", response_model=shemas.Club)
+def get_club_by_id(club_id: int):
+    """Получить определенный клуб по его id"""
+    with session.Session() as my_session:
+        club = my_session.query(session.Clubs).filter_by(id=club_id).first()
+        if not club:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail=f"club with id: {club_id} was not found",
+            )
+        return club
+
+
 @router.get("/city/{city_id}", response_model=typing.List[shemas.ClubBase])
 def get_clubs_by_cities(city_id: int):
     """Получить все кружки, которые существуют в определенном городе"""
