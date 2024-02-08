@@ -83,6 +83,21 @@ def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub):
         return club_query.first()
 
 
+@router.delete("/{club_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
+def delete_club(club_id: int):
+    with session.Session() as my_session:
+        club_query = my_session.query(session.Clubs).filter_by(id=club_id)
+        club = club_query.first()
+        if not club:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail=f"club with id: {club_id} was not found",
+            )
+        club_query.delete(synchronize_session=False)
+        my_session.commit()
+        return fastapi.Response(status_code=fastapi.status.HTTP_204_NO_CONTENT)
+
+
 @router.get("/city/{city_id}", response_model=typing.List[shemas.ClubBase])
 def get_clubs_by_cities(city_id: int):
     """Получить все кружки, которые существуют в определенном городе"""
