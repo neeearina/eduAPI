@@ -56,7 +56,7 @@ def create_club(club_info: shemas.CreateClub):
 
 @router.get("/{club_id}", response_model=shemas.Club)
 def get_club_by_id(club_id: int):
-    """Получить определенный клуб по его id"""
+    """Получить определенный кружок по его id"""
     with session.Session() as my_session:
         club = my_session.query(session.Clubs).filter_by(id=club_id).first()
         if not club:
@@ -69,7 +69,7 @@ def get_club_by_id(club_id: int):
 
 @router.put("/{club_id}", response_model=shemas.Club)
 def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub):
-    """Изменить пост по его id"""
+    """Изменить кружок по его id"""
     with session.Session() as my_session:
         club_query = my_session.query(session.Clubs).filter_by(id=club_id)
         club = club_query.first()
@@ -85,6 +85,7 @@ def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub):
 
 @router.delete("/{club_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
 def delete_club(club_id: int):
+    """Удалить кружок по его id"""
     with session.Session() as my_session:
         club_query = my_session.query(session.Clubs).filter_by(id=club_id)
         club = club_query.first()
