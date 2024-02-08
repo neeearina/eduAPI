@@ -24,7 +24,24 @@ def create_club(club_info: shemas.CreateClub):
     """Создать новый кружок"""
     with session.Session() as my_session:
         new_club = session.Clubs(**club_info.dict())
-        my_session.add(new_club)
+        is_city = (
+            my_session.query(session.Cities)
+            .filter_by(id=club_info.city_id).first()
+        )
+        if not is_city:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail=f"no city with id: {club_info.city_id}",
+            )
+        is_org = (
+            my_session.query(session.Organizations)
+            .filter_by(id=club_info.organization_id).first()
+        )
+        if not is_org:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail=f"no organization with id: {club_info.city_id}",
+            )
         my_session.commit()
         return (
             my_session.query(session.Clubs)
