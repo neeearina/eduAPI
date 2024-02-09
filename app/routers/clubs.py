@@ -24,10 +24,12 @@ def check_is_exist(query_class, object_id):
 
 
 @router.get("/", response_model=typing.List[shemas.ClubBase])
-def get_all_clubs():
+def get_all_clubs(limit: int = 10):
     """Получить все кружки, которые есть"""
     with session.Session() as my_session:
-        return my_session.query(session.Clubs.id, session.Clubs.name).all()
+        return (
+                my_session.query(session.Clubs.id, session.Clubs.name).limit(limit).all()
+        )
 
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
@@ -102,7 +104,7 @@ def delete_club(club_id: int):
 
 @router.get("/city/{city_id}", response_model=typing.List[shemas.ClubBase])
 def get_clubs_by_cities(city_id: int, tags: typing.List = fastapi.Query(),
-                        limit_queries: int = 10):
+                        limit: int = 10):
     """Получить все кружки, которые существуют в определенном городе
      по тегам"""
     with session.Session() as my_session:
@@ -134,7 +136,7 @@ def get_clubs_by_cities(city_id: int, tags: typing.List = fastapi.Query(),
         ]
         clubs_by_city = (
             my_session.query(session.Clubs.id, session.Clubs.name)
-            .filter(sqlalchemy.or_(*filters)).limit(limit_queries).all()
+            .filter(sqlalchemy.or_(*filters)).limit(limit).all()
         )
         if not clubs_by_city:
             raise fastapi.HTTPException(
