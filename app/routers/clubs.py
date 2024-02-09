@@ -1,6 +1,7 @@
 import typing
 
 import fastapi
+import sqlalchemy
 
 import session
 import shemas
@@ -100,17 +101,40 @@ def delete_club(club_id: int):
 
 
 @router.get("/city/{city_id}", response_model=typing.List[shemas.ClubBase])
-def get_clubs_by_cities(city_id: int):
-    """Получить все кружки, которые существуют в определенном городе"""
+def get_clubs_by_cities(city_id: int, tags: typing.List = fastapi.Query(),
+                        limit_queries: int = 10):
+    """Получить все кружки, которые существуют в определенном городе
+     по тегам"""
     with session.Session() as my_session:
         if not check_is_exist(session.Cities, city_id):
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail=f"city with id: {city_id} was not found",
             )
+        filters = [session.Tags.name == v for v in tags]
+        # [(2,), (3,)]
+        tags_lst = (
+            my_session.query(session.Tags.id)
+            .filter(sqlalchemy.or_(*filters)).all()
+        )
+        if not tags_lst:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail="no tags with such names",
+            )
+        filters = [session.ClubsTags.tag_id == v[0] for v in tags_lst]
+        clubs_by_tags = (
+            my_session.query(session.ClubsTags.club_id)
+            .filter(sqlalchemy.or_(*filters))
+        )
+        unique_clubs_id = set(v[0] for v in clubs_by_tags)
+        filters = [
+            session.Clubs.id == v and session.Clubs.city_id == city_id
+            for v in unique_clubs_id
+        ]
         clubs_by_city = (
             my_session.query(session.Clubs.id, session.Clubs.name)
-            .filter_by(city_id=city_id).all()
+            .filter(sqlalchemy.or_(*filters)).limit(limit_queries).all()
         )
         if not clubs_by_city:
             raise fastapi.HTTPException(
