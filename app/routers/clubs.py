@@ -24,7 +24,7 @@ def get_all_clubs(limit: int = 10):
 
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
-             response_model=shemas.Club)
+             response_model=shemas.ClubOut)
 def create_club(club_info: shemas.CreateClub):
     """Создать кружок"""
     with session.Session() as my_session:
@@ -48,7 +48,7 @@ def create_club(club_info: shemas.CreateClub):
         )
 
 
-@router.get("/{club_id}", response_model=shemas.Club)
+@router.get("/{club_id}", response_model=shemas.ClubOut)
 def get_club_by_id(club_id: int):
     """Получить определенный кружок"""
     with session.Session() as my_session:
@@ -61,7 +61,7 @@ def get_club_by_id(club_id: int):
         return club
 
 
-@router.put("/{club_id}", response_model=shemas.Club)
+@router.put("/{club_id}", response_model=shemas.ClubOut)
 def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub):
     """Изменить определенный кружок"""
     with session.Session() as my_session:

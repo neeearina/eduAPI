@@ -11,7 +11,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.get("/", response_model=typing.List[shemas.Tag])
+@router.get("/", response_model=typing.List[shemas.TagOut])
 def get_all_tags(limit: int = 10):
     """Получить все теги"""
 
@@ -22,7 +22,7 @@ def get_all_tags(limit: int = 10):
 
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
-             response_model=shemas.Tag)
+             response_model=shemas.TagOut)
 def create_tag(tag_info: shemas.TagBase):
     """Создать тег"""
     with session.Session() as my_session:
@@ -35,7 +35,7 @@ def create_tag(tag_info: shemas.TagBase):
         )
 
 
-@router.get("/{tag_id}", response_model=shemas.Tag)
+@router.get("/{tag_id}", response_model=shemas.TagOut)
 def get_tag_by_id(tag_id: int):
     """Получить определенный тег"""
     with session.Session() as my_session:
@@ -51,7 +51,7 @@ def get_tag_by_id(tag_id: int):
         return tag
 
 
-@router.put("/{tag_id}", response_model=shemas.Tag)
+@router.put("/{tag_id}", response_model=shemas.TagOut)
 def put_tag_by_id(tag_id: int, update_tag_info: shemas.TagBase):
     """Изменить определенный тег"""
     with session.Session() as my_session:

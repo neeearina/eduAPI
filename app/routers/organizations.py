@@ -11,7 +11,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.get("/", response_model=typing.List[shemas.Organization])
+@router.get("/", response_model=typing.List[shemas.OrganizationGet])
 def get_all_orgs(limit: int = 10):
     """Получить все организации"""
     with session.Session() as my_session:

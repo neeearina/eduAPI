@@ -6,7 +6,7 @@ class ClubBase(pydantic.BaseModel):
     name: str
 
 
-class Club(ClubBase):
+class ClubOut(ClubBase):
     description: str
     city_id: int
     organization_id: int
@@ -19,15 +19,6 @@ class CreateClub(pydantic.BaseModel):
     organization_id: int
 
 
-class TagBase(pydantic.BaseModel):
-    name: str
-    description: str
-
-
-class Tag(TagBase):
-    id: int
-
-
 class OrganizationBase(pydantic.BaseModel):
     name: str
     director: str
@@ -36,10 +27,19 @@ class OrganizationBase(pydantic.BaseModel):
     address: str
 
 
-class Organization(pydantic.BaseModel):
+class OrganizationGet(pydantic.BaseModel):
     id: int
     name: str
 
 
-class OrganizationOut(Organization, OrganizationBase):
-    pass
+class OrganizationOut(OrganizationBase):
+    id: int
+
+
+class TagBase(pydantic.BaseModel):
+    name: str
+    description: str
+
+
+class TagOut(TagBase):
+    id: int
