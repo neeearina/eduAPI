@@ -1,10 +1,12 @@
 import fastapi
 
 import routers.clubs
+import routers.tags
 
 app = fastapi.FastAPI()
 
 app.include_router(routers.clubs.router)
+app.include_router(routers.tags.router)
 
 
 @app.get("/")

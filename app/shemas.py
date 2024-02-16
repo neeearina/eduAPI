@@ -11,12 +11,18 @@ class Club(ClubBase):
     city_id: int
     organization_id: int
 
-    # class Config:
-    #     orm_mode = True
-
 
 class CreateClub(pydantic.BaseModel):
     name: str
     description: str
     city_id: int
     organization_id: int
+
+
+class TagBase(pydantic.BaseModel):
+    name: str
+    description: str
+
+
+class Tag(TagBase):
+    id: int

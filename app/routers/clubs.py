@@ -5,6 +5,7 @@ import sqlalchemy
 
 import session
 import shemas
+import utils
 
 router = fastapi.APIRouter(
     prefix="/clubs",
@@ -12,23 +13,13 @@ router = fastapi.APIRouter(
 )
 
 
-def check_is_exist(query_class, object_id):
-    with session.Session() as my_session:
-        is_exist = (
-            my_session.query(query_class)
-            .filter_by(id=object_id).first()
-        )
-        if is_exist:
-            return True
-        return False
-
-
 @router.get("/", response_model=typing.List[shemas.ClubBase])
 def get_all_clubs(limit: int = 10):
     """Получить все кружки, которые есть"""
     with session.Session() as my_session:
         return (
-                my_session.query(session.Clubs.id, session.Clubs.name).limit(limit).all()
+            my_session.query(session.Clubs.id, session.Clubs.name)
+            .limit(limit).all()
         )
 
 
@@ -38,13 +29,13 @@ def create_club(club_info: shemas.CreateClub):
     """Создать новый кружок"""
     with session.Session() as my_session:
         new_club = session.Clubs(**club_info.dict())
-        if not check_is_exist(session.Cities, club_info.city_id):
+        if not utils.check_is_exist(session.Cities, club_info.city_id):
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail=f"no city with id: {club_info.city_id}",
             )
-        if not check_is_exist(session.Organizations,
-                              club_info.organization_id):
+        if not utils.check_is_exist(session.Organizations,
+                                    club_info.organization_id):
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail=f"no organization with id: {club_info.city_id}",
@@ -108,13 +99,12 @@ def get_clubs_by_cities(city_id: int, tags: typing.List = fastapi.Query(),
     """Получить все кружки, которые существуют в определенном городе
      по тегам"""
     with session.Session() as my_session:
-        if not check_is_exist(session.Cities, city_id):
+        if not utils.check_is_exist(session.Cities, city_id):
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail=f"city with id: {city_id} was not found",
             )
         filters = [session.Tags.name == v for v in tags]
-        # [(2,), (3,)]
         tags_lst = (
             my_session.query(session.Tags.id)
             .filter(sqlalchemy.or_(*filters)).all()
