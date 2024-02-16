@@ -13,7 +13,7 @@ router = fastapi.APIRouter(
 
 @router.get("/", response_model=typing.List[shemas.Tag])
 def get_all_tags(limit: int = 10):
-    """Получить все теги, которые есть"""
+    """Получить все теги"""
 
     with session.Session() as my_session:
         return (
@@ -24,7 +24,7 @@ def get_all_tags(limit: int = 10):
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
              response_model=shemas.Tag)
 def create_tag(tag_info: shemas.TagBase):
-    """Создать новый тег"""
+    """Создать тег"""
     with session.Session() as my_session:
         new_tag = session.Tags(**tag_info.dict())
         my_session.add(new_tag)
@@ -37,7 +37,7 @@ def create_tag(tag_info: shemas.TagBase):
 
 @router.get("/{tag_id}", response_model=shemas.Tag)
 def get_tag_by_id(tag_id: int):
-    """Получить тег по id"""
+    """Получить определенный тег"""
     with session.Session() as my_session:
         tag = (
             my_session.query(session.Tags)
@@ -53,14 +53,14 @@ def get_tag_by_id(tag_id: int):
 
 @router.put("/{tag_id}", response_model=shemas.Tag)
 def put_tag_by_id(tag_id: int, update_tag_info: shemas.TagBase):
-    """Изменить тег по его id"""
+    """Изменить определенный тег"""
     with session.Session() as my_session:
         tag_query = my_session.query(session.Tags).filter_by(id=tag_id)
         tag = tag_query.first()
         if not tag:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
-                detail=f"tag with id: {tag_id} was not found",
+                detail=f"no tag with id: {tag_id}",
             )
         tag_query.update(update_tag_info.dict(), synchronize_session=False)
         my_session.commit()
@@ -69,14 +69,14 @@ def put_tag_by_id(tag_id: int, update_tag_info: shemas.TagBase):
 
 @router.delete("/{tag_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
 def delete_tag_by_id(tag_id: int):
-    """Удалить тег по его id"""
+    """Удалить определенный тег"""
     with session.Session() as my_session:
         tag_query = my_session.query(session.Tags).filter_by(id=tag_id)
         tag = tag_query.first()
         if not tag:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
-                detail=f"tag with id: {tag_id} was not found",
+                detail=f"no tag with id: {tag_id}",
             )
         tag_query.delete(synchronize_session=False)
         my_session.commit()

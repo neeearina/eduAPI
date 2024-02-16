@@ -12,7 +12,7 @@ router = fastapi.APIRouter(
 
 
 @router.get("/", response_model=typing.List[shemas.Organization])
-def get_all_org(limit: int = 10):
+def get_all_orgs(limit: int = 10):
     """Получить все организации"""
     with session.Session() as my_session:
         return (
@@ -36,7 +36,7 @@ def create_org(org_info: shemas.OrganizationBase):
 
 @router.get("/{org_id}", response_model=shemas.OrganizationOut)
 def get_org_by_id(org_id: int):
-    """Получить оргиназвцию по id"""
+    """Получить определенную организацию"""
     with session.Session() as my_session:
         org = (
             my_session.query(session.Organizations)
@@ -52,7 +52,7 @@ def get_org_by_id(org_id: int):
 
 @router.put("/{org_id}", response_model=shemas.OrganizationOut)
 def put_org_by_id(org_id: int, update_org_info: shemas.OrganizationBase):
-    """Изменить организацию по id"""
+    """Изменить определенную организацию"""
     with session.Session() as my_session:
         org_query = (
             my_session.query(session.Organizations)
@@ -62,7 +62,7 @@ def put_org_by_id(org_id: int, update_org_info: shemas.OrganizationBase):
         if not org:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
-                detail=f"organization with id: {org_id} was not found",
+                detail=f"no organization with id: {org_id}",
             )
         org_query.update(update_org_info.dict(), synchronize_session=False)
         my_session.commit()
@@ -70,7 +70,8 @@ def put_org_by_id(org_id: int, update_org_info: shemas.OrganizationBase):
 
 
 @router.delete("/{org_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def delete_org(org_id: int):
+def delete_org_by_id(org_id: int):
+    """Удалить определенную организацию"""
     with session.Session() as my_session:
         org_query = (
             my_session.query(session.Organizations)
@@ -80,7 +81,7 @@ def delete_org(org_id: int):
         if not org:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
-                detail=f"organization with id: {org_id} was not found",
+                detail=f"no organization with id: {org_id}",
             )
         org_query.delete(synchronize_session=False)
         my_session.commit()
