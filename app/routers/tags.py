@@ -15,7 +15,7 @@ router = fastapi.APIRouter(
 def get_all_tags(limit: int = 10):
     """Получить все теги, которые есть"""
 
-    with session.Session as my_session:
+    with session.Session() as my_session:
         return (
             my_session.query(session.Tags).limit(limit).all()
         )
@@ -31,7 +31,7 @@ def create_tag(tag_info: shemas.TagBase):
         my_session.commit()
         return (
             my_session.query(session.Tags)
-            .filter_by(id=new_tag.id.first())
+            .filter_by(id=new_tag.id).first()
         )
 
 
