@@ -26,3 +26,20 @@ class TagBase(pydantic.BaseModel):
 
 class Tag(TagBase):
     id: int
+
+
+class OrganizationBase(pydantic.BaseModel):
+    name: str
+    director: str
+    email: str
+    site: str
+    address: str
+
+
+class Organization(pydantic.BaseModel):
+    id: int
+    name: str
+
+
+class OrganizationOut(Organization, OrganizationBase):
+    pass
