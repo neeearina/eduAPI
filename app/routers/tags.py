@@ -14,11 +14,16 @@ router = fastapi.APIRouter(
 @router.get("/", response_model=typing.List[shemas.TagOut])
 def get_all_tags(limit: int = 10):
     """Получить все теги"""
-
     with session.Session() as my_session:
-        return (
+        tags = (
             my_session.query(session.Tags).limit(limit).all()
         )
+        if not tags:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail="no tags",
+            )
+        return tags
 
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,

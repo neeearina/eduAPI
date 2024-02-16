@@ -17,10 +17,16 @@ router = fastapi.APIRouter(
 def get_all_clubs(limit: int = 10):
     """Получить все кружки"""
     with session.Session() as my_session:
-        return (
+        clubs = (
             my_session.query(session.Clubs.id, session.Clubs.name)
             .limit(limit).all()
         )
+        if not clubs:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail="no clubs",
+            )
+        return clubs
 
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,

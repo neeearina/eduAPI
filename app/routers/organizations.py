@@ -15,9 +15,15 @@ router = fastapi.APIRouter(
 def get_all_orgs(limit: int = 10):
     """Получить все организации"""
     with session.Session() as my_session:
-        return (
+        orgs = (
             my_session.query(session.Organizations).limit(limit).all()
         )
+        if not orgs:
+            raise fastapi.HTTPException(
+                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                detail="no orgs",
+            )
+        return orgs
 
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
