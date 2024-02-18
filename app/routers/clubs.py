@@ -3,6 +3,7 @@ import typing
 import fastapi
 import sqlalchemy
 
+import oauth2
 import session
 import shemas
 import utils
@@ -31,7 +32,9 @@ def get_all_clubs(limit: int = 10):
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
              response_model=shemas.ClubOut)
-def create_club(club_info: shemas.CreateClub):
+def create_club(club_info: shemas.CreateClub,
+                get_current_user: int =
+                fastapi.Depends(oauth2.get_current_user)):
     """Создать кружок"""
     with session.Session() as my_session:
         new_club = session.Clubs(**club_info.dict())
@@ -68,7 +71,9 @@ def get_club_by_id(club_id: int):
 
 
 @router.put("/{club_id}", response_model=shemas.ClubOut)
-def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub):
+def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub,
+                   get_current_user: int =
+                   fastapi.Depends(oauth2.get_current_user)):
     """Изменить определенный кружок"""
     with session.Session() as my_session:
         club_query = my_session.query(session.Clubs).filter_by(id=club_id)
@@ -84,7 +89,9 @@ def put_club_by_id(club_id: int, update_club_info: shemas.CreateClub):
 
 
 @router.delete("/{club_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def delete_club_by_id(club_id: int):
+def delete_club_by_id(club_id: int,
+                      get_current_user: int =
+                      fastapi.Depends(oauth2.get_current_user)):
     """Удалить определенный кружок"""
     with session.Session() as my_session:
         club_query = my_session.query(session.Clubs).filter_by(id=club_id)

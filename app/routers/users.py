@@ -36,7 +36,7 @@ def get_user(user_id: int):
         )
         if not user:
             raise fastapi.HTTPException(
-                status_code=fastapi.status.HTTP_404_NOT_FOUND,
+                status_code=fastapi.status.HTTP_403_FORBIDDEN,
                 detail=f"no user with id: {user_id}",
             )
         return user

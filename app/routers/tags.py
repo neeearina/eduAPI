@@ -2,6 +2,7 @@ import typing
 
 import fastapi
 
+import oauth2
 import session
 import shemas
 
@@ -28,7 +29,9 @@ def get_all_tags(limit: int = 10):
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
              response_model=shemas.TagOut)
-def create_tag(tag_info: shemas.TagBase):
+def create_tag(tag_info: shemas.TagBase,
+               get_current_user: int =
+               fastapi.Depends(oauth2.get_current_user)):
     """Создать тег"""
     with session.Session() as my_session:
         new_tag = session.Tags(**tag_info.dict())
@@ -57,7 +60,9 @@ def get_tag_by_id(tag_id: int):
 
 
 @router.put("/{tag_id}", response_model=shemas.TagOut)
-def put_tag_by_id(tag_id: int, update_tag_info: shemas.TagBase):
+def put_tag_by_id(tag_id: int, update_tag_info: shemas.TagBase,
+                  get_current_user: int =
+                  fastapi.Depends(oauth2.get_current_user)):
     """Изменить определенный тег"""
     with session.Session() as my_session:
         tag_query = my_session.query(session.Tags).filter_by(id=tag_id)
@@ -73,7 +78,9 @@ def put_tag_by_id(tag_id: int, update_tag_info: shemas.TagBase):
 
 
 @router.delete("/{tag_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def delete_tag_by_id(tag_id: int):
+def delete_tag_by_id(tag_id: int,
+                     get_current_user: int =
+                     fastapi.Depends(oauth2.get_current_user)):
     """Удалить определенный тег"""
     with session.Session() as my_session:
         tag_query = my_session.query(session.Tags).filter_by(id=tag_id)

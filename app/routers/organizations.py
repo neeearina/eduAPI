@@ -2,6 +2,7 @@ import typing
 
 import fastapi
 
+import oauth2
 import session
 import shemas
 
@@ -28,7 +29,9 @@ def get_all_orgs(limit: int = 10):
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
              response_model=shemas.OrganizationOut)
-def create_org(org_info: shemas.OrganizationBase):
+def create_org(org_info: shemas.OrganizationBase,
+               get_current_user: int =
+               fastapi.Depends(oauth2.get_current_user)):
     """Создать организацию"""
     with session.Session() as my_session:
         new_org = session.Organizations(**org_info.dict())
@@ -57,7 +60,9 @@ def get_org_by_id(org_id: int):
 
 
 @router.put("/{org_id}", response_model=shemas.OrganizationOut)
-def put_org_by_id(org_id: int, update_org_info: shemas.OrganizationBase):
+def put_org_by_id(org_id: int, update_org_info: shemas.OrganizationBase,
+                  get_current_user: int =
+                  fastapi.Depends(oauth2.get_current_user)):
     """Изменить определенную организацию"""
     with session.Session() as my_session:
         org_query = (
@@ -76,7 +81,9 @@ def put_org_by_id(org_id: int, update_org_info: shemas.OrganizationBase):
 
 
 @router.delete("/{org_id}", status_code=fastapi.status.HTTP_204_NO_CONTENT)
-def delete_org_by_id(org_id: int):
+def delete_org_by_id(org_id: int,
+                     get_current_user: int =
+                     fastapi.Depends(oauth2.get_current_user)):
     """Удалить определенную организацию"""
     with session.Session() as my_session:
         org_query = (
