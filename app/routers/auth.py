@@ -1,5 +1,6 @@
 import fastapi
 
+import oauth2
 import session
 import shemas
 import utils
@@ -9,7 +10,7 @@ router = fastapi.APIRouter(
 )
 
 
-@router.post("/loggin")
+@router.post("/login")
 def login(user_credentials: shemas.User):
     with session.Session() as my_session:
         user = (
@@ -22,4 +23,9 @@ def login(user_credentials: shemas.User):
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail="invalid credentials",
             )
-        return {"token": "example token"}
+        return {
+            "access_token": oauth2.create_access_token(
+                data={"user_id": user.id},
+            ),
+            "token_type": "bearer",
+        }
