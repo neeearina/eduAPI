@@ -12,7 +12,7 @@ router = fastapi.APIRouter(
 
 @router.post("/", status_code=fastapi.status.HTTP_201_CREATED,
              response_model=shemas.UserOut)
-def create_user(user_info: shemas.UserCreate):
+def create_user(user_info: shemas.User):
     """Создать пользователя"""
     with session.Session() as my_session:
         hashed_password = utils.hash(user_info.password)

@@ -1,5 +1,6 @@
 import fastapi
 
+import routers.auth
 import routers.clubs
 import routers.organizations
 import routers.tags
@@ -11,6 +12,7 @@ app.include_router(routers.clubs.router)
 app.include_router(routers.tags.router)
 app.include_router(routers.organizations.router)
 app.include_router(routers.users.router)
+app.include_router(routers.auth.router)
 
 
 @app.get("/")

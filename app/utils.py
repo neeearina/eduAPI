@@ -12,6 +12,10 @@ def hash(password: str):
     return pwd_context.hash(password)
 
 
+def verify(plain_password, hashed_password):
+    return pwd_context.verify(plain_password, hashed_password)
+
+
 def check_is_exist(query_class, object_id):
     with session.Session() as my_session:
         is_exist = (

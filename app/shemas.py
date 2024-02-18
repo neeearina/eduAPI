@@ -47,7 +47,7 @@ class TagOut(TagBase):
     id: int
 
 
-class UserCreate(pydantic.BaseModel):
+class User(pydantic.BaseModel):
     email: pydantic.EmailStr
     password: str
 
