@@ -31,7 +31,8 @@ class FakeData:
 
     def __create_tags(self) -> None:
         tags_lst = [
-            self.__faker.sentence(nb_words=1) for _ in range(self._quantity)]
+            self.__faker.sentence(nb_words=1) for _ in range(self._quantity)
+        ]
 
         description_lst = [
             self.__faker.sentence(nb_words=10) for _ in range(self._quantity)

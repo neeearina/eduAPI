@@ -47,6 +47,11 @@ class TagOut(TagBase):
     id: int
 
 
+class Token(pydantic.BaseModel):
+    access_token: str
+    token_type: str
+
+
 class User(pydantic.BaseModel):
     email: pydantic.EmailStr
     password: str
@@ -56,8 +61,3 @@ class UserOut(pydantic.BaseModel):
     id: int
     email: pydantic.EmailStr
     created_at: datetime.datetime
-
-
-class Token(pydantic.BaseModel):
-    access_token: str
-    token_type: str

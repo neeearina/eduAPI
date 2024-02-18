@@ -20,10 +20,8 @@ def create_user(user_info: shemas.User):
         new_user = session.User(**user_info.dict())
         my_session.add(new_user)
         my_session.commit()
-        return (
-            my_session.query(session.User)
-            .filter_by(id=new_user.id).first()
-        )
+        return (my_session.query(session.User)
+                .filter_by(id=new_user.id).first())
 
 
 @router.get("/{user_id}", response_model=shemas.UserOut)

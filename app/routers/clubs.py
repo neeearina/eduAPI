@@ -18,10 +18,8 @@ router = fastapi.APIRouter(
 def get_all_clubs(limit: int = 10):
     """Получить все кружки"""
     with session.Session() as my_session:
-        clubs = (
-            my_session.query(session.Clubs.id, session.Clubs.name)
-            .limit(limit).all()
-        )
+        clubs = (my_session.query(session.Clubs.id, session.Clubs.name)
+                 .limit(limit).all())
         if not clubs:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
@@ -51,10 +49,8 @@ def create_club(club_info: shemas.CreateClub,
             )
         my_session.add(new_club)
         my_session.commit()
-        return (
-            my_session.query(session.Clubs)
-            .filter_by(id=new_club.id).first()
-        )
+        return (my_session.query(session.Clubs)
+                .filter_by(id=new_club.id).first())
 
 
 @router.get("/{club_id}", response_model=shemas.ClubOut)
@@ -118,29 +114,23 @@ def get_clubs_by_cities(city_id: int, tags: typing.List = fastapi.Query(),
                 detail=f"no city with id: {city_id}",
             )
         filters = [session.Tags.name == v for v in tags]
-        tags_lst = (
-            my_session.query(session.Tags.id)
-            .filter(sqlalchemy.or_(*filters)).all()
-        )
+        tags_lst = (my_session.query(session.Tags.id)
+                    .filter(sqlalchemy.or_(*filters)).all())
         if not tags_lst:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,
                 detail="no tags with such names",
             )
         filters = [session.ClubsTags.tag_id == v[0] for v in tags_lst]
-        clubs_by_tags = (
-            my_session.query(session.ClubsTags.club_id)
-            .filter(sqlalchemy.or_(*filters))
-        )
+        clubs_by_tags = (my_session.query(session.ClubsTags.club_id)
+                         .filter(sqlalchemy.or_(*filters)))
         unique_clubs_id = set(v[0] for v in clubs_by_tags)
         filters = [
             session.Clubs.id == v and session.Clubs.city_id == city_id
             for v in unique_clubs_id
         ]
-        clubs_by_city = (
-            my_session.query(session.Clubs.id, session.Clubs.name)
-            .filter(sqlalchemy.or_(*filters)).limit(limit).all()
-        )
+        clubs_by_city = (my_session.query(session.Clubs.id, session.Clubs.name)
+                         .filter(sqlalchemy.or_(*filters)).limit(limit).all())
         if not clubs_by_city:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,

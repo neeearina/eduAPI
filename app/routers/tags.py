@@ -47,10 +47,8 @@ def create_tag(tag_info: shemas.TagBase,
 def get_tag_by_id(tag_id: int):
     """Получить определенный тег"""
     with session.Session() as my_session:
-        tag = (
-            my_session.query(session.Tags)
-            .filter_by(id=tag_id).first()
-        )
+        tag = (my_session.query(session.Tags)
+               .filter_by(id=tag_id).first())
         if not tag:
             raise fastapi.HTTPException(
                 status_code=fastapi.status.HTTP_404_NOT_FOUND,

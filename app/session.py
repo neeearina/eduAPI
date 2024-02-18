@@ -1,5 +1,4 @@
 import datetime
-import re
 
 import sqlalchemy.orm
 import sqlalchemy.sql.expression
@@ -147,22 +146,8 @@ class Organizations(Base):
     address = sqlalchemy.Column(
         type_=sqlalchemy.String,
         nullable=True,
-        doc="Адрес",
+        doc="Адрес офиса организации",
     )
-
-    @sqlalchemy.orm.validates("email")
-    def validate_email(self, key, mail: str):
-        assert "@" in mail, "Некорректный email"
-        return re.sub(r"[,?!.]", "", mail).lower()
-
-    @sqlalchemy.orm.validates("site")
-    def validate_site(self, key, url: str):
-        pattern = (
-            r"https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\."
-            r"[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)"
-        )
-        assert re.match(pattern, url), "Некорректный url"
-        return url
 
     def __repr__(self):
         return self.name

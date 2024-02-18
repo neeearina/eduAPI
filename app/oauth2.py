@@ -18,10 +18,8 @@ oauth2_scheme = fastapi.security.OAuth2PasswordBearer(tokenUrl="login")
 
 def create_access_token(data: dict):
     to_encode = data.copy()
-    expire = (
-            datetime.datetime.utcnow() +
-            datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    )
+    expire = (datetime.datetime.utcnow() +
+              datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     to_encode.update({"exp": expire})
     return jose.jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
