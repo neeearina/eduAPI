@@ -1,3 +1,4 @@
+import datetime
 import re
 
 import sqlalchemy.orm
@@ -219,7 +220,7 @@ class User(Base):
     created_at = sqlalchemy.Column(
         type_=sqlalchemy.sql.sqltypes.TIMESTAMP(timezone=True),
         nullable=False,
-        server_default=sqlalchemy.sql.expression.text("now()"),
+        default=datetime.datetime.now(),
         doc="Время создания",
     )
 

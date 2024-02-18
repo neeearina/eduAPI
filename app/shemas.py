@@ -1,3 +1,5 @@
+import datetime
+
 import pydantic
 
 
@@ -43,3 +45,14 @@ class TagBase(pydantic.BaseModel):
 
 class TagOut(TagBase):
     id: int
+
+
+class UserCreate(pydantic.BaseModel):
+    email: pydantic.EmailStr
+    password: str
+
+
+class UserOut(pydantic.BaseModel):
+    id: int
+    email: pydantic.EmailStr
+    created_at: datetime.datetime
