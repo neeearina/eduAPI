@@ -1,8 +1,8 @@
 import fastapi
+import fastapi.security.oauth2 as security
 
 import oauth2
 import session
-import shemas
 import utils
 
 router = fastapi.APIRouter(
@@ -11,11 +11,12 @@ router = fastapi.APIRouter(
 
 
 @router.post("/login")
-def login(user_credentials: shemas.User):
+def login(user_credentials: security.OAuth2PasswordRequestForm
+          = fastapi.Depends()):
     with session.Session() as my_session:
         user = (
             my_session.query(session.User)
-            .filter_by(email=user_credentials.email).first()
+            .filter_by(email=user_credentials.username).first()
         )
         if (not user or
                 not utils.verify(user_credentials.password, user.password)):
