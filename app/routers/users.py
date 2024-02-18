@@ -2,6 +2,7 @@ import fastapi
 
 import session
 import shemas
+import utils
 
 router = fastapi.APIRouter(
     prefix="/users",
@@ -14,6 +15,8 @@ router = fastapi.APIRouter(
 def create_user(user_info: shemas.UserCreate):
     """Создать пользователя"""
     with session.Session() as my_session:
+        hashed_password = utils.hash(user_info.password)
+        user_info.password = hashed_password
         new_user = session.User(**user_info.dict())
         my_session.add(new_user)
         my_session.commit()

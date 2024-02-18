@@ -1,4 +1,15 @@
+import passlib.context
+
 import session
+
+pwd_context = passlib.context.CryptContext(
+    schemes=["bcrypt"],
+    deprecated="auto",
+)
+
+
+def hash(password: str):
+    return pwd_context.hash(password)
 
 
 def check_is_exist(query_class, object_id):
