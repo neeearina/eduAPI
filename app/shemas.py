@@ -24,8 +24,8 @@ class CreateClub(pydantic.BaseModel):
 class OrganizationBase(pydantic.BaseModel):
     name: str
     director: str
-    email: str
-    site: str
+    email: pydantic.EmailStr
+    site: pydantic.AnyUrl
     address: str
 
 
