@@ -1,6 +1,8 @@
 import re
 
 import sqlalchemy.orm
+import sqlalchemy.sql.expression
+import sqlalchemy.sql.sqltypes
 
 DATABASE_NAME = "db.sqlite"
 
@@ -190,3 +192,36 @@ class Tags(Base):
 
     def __repr__(self):
         return self.name
+
+
+class User(Base):
+    """Класс, описывающий таблицу для регистрации пользователей"""
+
+    __tablename__ = "users"
+
+    id = sqlalchemy.Column(
+        type_=sqlalchemy.Integer,
+        primary_key=True,
+        autoincrement=True,
+        doc="Уникальный индентификатор пользователя",
+    )
+    email = sqlalchemy.Column(
+        type_=sqlalchemy.String,
+        nullable=False,
+        unique=True,
+        doc="Электронная почта пользователя",
+    )
+    password = sqlalchemy.Column(
+        type_=sqlalchemy.String,
+        nullable=False,
+        doc="Пароль пользователя",
+    )
+    created_at = sqlalchemy.Column(
+        type_=sqlalchemy.sql.sqltypes.TIMESTAMP(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.sql.expression.text("now()"),
+        doc="Время создания",
+    )
+
+    def __repr__(self):
+        return self.email
