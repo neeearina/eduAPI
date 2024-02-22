@@ -1,9 +1,4 @@
 {
-  "alembic_version": [
-    {
-      "version_num": "1e388b6966dd"
-    }
-  ],
   "cities": [
     {
       "id": 1,
